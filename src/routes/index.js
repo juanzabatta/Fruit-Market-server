@@ -4,13 +4,13 @@ const router = express.Router();
 
 const Product = require('../models/Product');
 
-// Leer Tareas
+// Read products
 router.get('/', async (req, res) => {
   const products = await Product.find();
   res.json(products);
 });
 
-// Agregar Tareas
+// Add Products
 router.post('/', async (req, res) => {
   const product = new Product(req.body);
   await product.save();
@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
   });
 });
 
-// Actualizar Tareas
+// Update products
 router.put('/:id', async (req, res) => {
   await Product.findByIdAndUpdate(req.params.id, req.body)
 
@@ -28,7 +28,7 @@ router.put('/:id', async (req, res) => {
   });
 });
 
-// Borrar Tareas
+// Delete products
 router.delete('/:id', async (req, res) => {
   await Product.findByIdAndDelete(req.params.id)
 
