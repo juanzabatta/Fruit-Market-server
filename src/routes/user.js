@@ -1,19 +1,42 @@
 const express = require('express');
 const router = express.Router();
+
+// Hash Password
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-const User = require('../models/User');
-const { request } = require('../server');
+// Underscore
+const _ = require('underscore');
 
-// Add new user
-router.post('/new-user', async (req, res) => {
+// Schema BD
+const User = require('../models/User');
+
+// Middlewares Auth
+const { verifyAuth } = require('../middlewares/auth');
+
+
+// Register new user
+router.post('/register', async (req, res) => {
 
     const body = {
         name: req.body.name,
+        surnames: req.body.surnames,
+        userName: req.body.userName,
+        dateOfBirth: req.body.dateOfBirth,
+        RUT: req.body.RUT,
+        gender: req.body.gender,
         email: req.body.email,
-        role: req.body.role
-    };
+    }
+
+    if (req.body.address) {
+        body.address = {
+            country: req.body.address.country,
+            region: req.body.address.region,
+            city: req.body.address.city,
+            street: req.body.address.street,
+            local: req.body.address.local
+        }
+    }
 
     // Encrypt the password
     body.password = bcrypt.hashSync(req.body.password, saltRounds);
@@ -32,22 +55,41 @@ router.post('/new-user', async (req, res) => {
 });
 
 // Update User
-router.put('/user/:id', async (req, res) => {
+router.put('/user/:id', verifyAuth, async (req, res) => {
 
-    await Product.findByIdAndUpdate(req.params.id, req.body)
+    const _id = req.params.id
+    const body = _.pick(req.body, [
+        'name',
+        'email',
+        'password',
+        'active',
+        'surnames',
+        'userName',
+        'dateOfBirth',
+        'RUT',
+        'gender',
+        'address'])
 
-    // const _id = request.params.id;
-    // const body = req.body;
-    // try {
-    //     const userDB = await User.findByIdAndUpdate(_id, body, { new: true });
-    //     return res.json(userDB);
 
-    // } catch (error) {
-    //     return res.status(400).json({
-    //         message: 'Ocurrió un error',
-    //         error
-    //     })
-    // }
+    // Encrypt the password
+    if (body.password) {
+        body.password = bcrypt.hashSync(req.body.password, saltRounds);
+    }
+
+    try {
+        const userDB = await User.findByIdAndUpdate(_id, body, { new: true, runValidators: true })
+
+        res.json({
+            status: 'user Updated',
+            userDB
+        });
+
+    } catch (error) {
+        return res.status(400).json({
+            message: 'Ocurrió un error',
+            error
+        })
+    }
 });
 
 

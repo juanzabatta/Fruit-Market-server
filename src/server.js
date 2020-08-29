@@ -26,13 +26,13 @@ app.use(cors());
 app.use(compression());
 app.set('view engine', 'html');
 
-
 // Static folder
 app.use(express.static(__dirname + '/public/'));
 
 // Routes
 app.use('/api/products', require('./routes/index'));
 app.use('/api/users', require('./routes/user'));
+app.use('/api/login', require('./routes/login'));
 
 // Middleware for Vue.js router modo history
 const history = require('connect-history-api-fallback');
