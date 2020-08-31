@@ -11,7 +11,7 @@ const roles = {
 
 // Define Gender
 const genders = {
-    values: ['HOMBRE', 'MUJER', 'OTRO'],
+    values: ['hombre', 'mujer', 'otro'],
     message: '{VALUE} genero no válido'
 };
 
@@ -37,6 +37,7 @@ const UserSchema = new Schema({
         required: [true, 'El correo es necesario'],
         unique: true
     },
+    phone: { type: String, required: [true, 'El número de telefono es necesario'] },
     password: { type: String, required: [true, 'La contraseña es necesaria'] },
     date: { type: Date, default: Date.now },
     role: { type: String, default: 'USER', enum: roles },

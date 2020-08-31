@@ -23,9 +23,10 @@ router.post('/register', async (req, res) => {
         surnames: req.body.surnames,
         userName: req.body.userName,
         dateOfBirth: req.body.dateOfBirth,
-        RUT: req.body.RUT,
+        RUT: req.body.rut,
         gender: req.body.gender,
         email: req.body.email,
+        phone: req.body.phone
     }
 
     if (req.body.address) {
@@ -42,15 +43,38 @@ router.post('/register', async (req, res) => {
     body.password = bcrypt.hashSync(req.body.password, saltRounds);
 
     try {
-
         const userDB = await User.create(body);
-        res.json(userDB);
+        res.json({
+            status: 'user Registred',
+            userDB
+        });
 
     } catch (error) {
-        return res.status(500).json({
-            message: 'Ocurrió un error',
-            error
-        })
+        const userDB2 = await User.findOne({ $or: [{ email: body.email }, { userName: body.userName }, { RUT: body.RUT }] });
+
+        if (userDB2.email === body.email) {
+            return res.status(500).json({
+                message: 'El correo ya está en uso.',
+                error
+            })
+        } else if (userDB2.userName === body.userName) {
+            return res.status(500).json({
+                message: 'El nombre de usuario ya está en uso.',
+                error
+            })
+        } else if (userDB2.RUT === body.RUT) {
+            return res.status(500).json({
+                message: 'El RUT del usuario ya está en uso.',
+                error
+            })
+        } else {
+            return res.status(500).json({
+                message: 'Ocurrió un error al intentar conectarse al servidor',
+                error
+            })
+        }
+
+
     }
 });
 
@@ -61,6 +85,7 @@ router.put('/user/:id', verifyAuth, async (req, res) => {
     const body = _.pick(req.body, [
         'name',
         'email',
+        'phone',
         'password',
         'active',
         'surnames',
@@ -85,10 +110,29 @@ router.put('/user/:id', verifyAuth, async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(400).json({
-            message: 'Ocurrió un error',
-            error
-        })
+        const userDB2 = await User.findOne({ $or: [{ email: body.email }, { userName: body.userName }, { RUT: body.RUT }] });
+
+        if (userDB2.email === body.email) {
+            return res.status(400).json({
+                message: 'El correo ya está en uso.',
+                error
+            })
+        } else if (userDB2.userName === body.userName) {
+            return res.status(400).json({
+                message: 'El nombre de usuario ya está en uso.',
+                error
+            })
+        } else if (userDB2.RUT === body.RUT) {
+            return res.status(400).json({
+                message: 'El RUT del usuario ya está en uso.',
+                error
+            })
+        } else {
+            return res.status(400).json({
+                message: 'Ocurrió un error al intentar conectarse al servidor',
+                error
+            })
+        }
     }
 });
 
