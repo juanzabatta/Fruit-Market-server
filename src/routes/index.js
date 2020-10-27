@@ -12,7 +12,11 @@ router.post('/products', [verifyAuth, verifyDirective], productsController.add);
 // Update products
 router.put('/products/:id', verifyAuth, productsController.update);
 // Delete products
-router.put('/products/:id',  [verifyAuth, verifyDirective], productsController.delete);
+router.put(
+	'/products/:id',
+	[verifyAuth, verifyDirective],
+	productsController.delete,
+);
 
 const userController = require('../controllers/user');
 

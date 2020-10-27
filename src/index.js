@@ -14,7 +14,6 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(compression());
-app.set('view engine', 'html');
 
 // Static folder
 app.use(express.static(__dirname + '/public/'));
@@ -25,11 +24,10 @@ app.use('/api', require('./routes'));
 // Middleware for Vue.js router modo history
 const history = require('connect-history-api-fallback');
 app.use(history());
-app.use(express.static(__dirname + '/public'));
 
 // Listening to port
 app.listen(app.get('port'), () => {
-    console.log('Server on port', app.get('port'));
+	console.log('Server on port', app.get('port'));
 });
 
 module.exports = app;
