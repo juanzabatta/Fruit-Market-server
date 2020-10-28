@@ -22,9 +22,6 @@ controller.register = async (req, res) => {
 	}
 
 	try {
-    // Encrypt the password
-    body.password = bcrypt.hashSync(req.body.password, saltRounds);
-
 		if (
 			!body.name ||
 			!body.surnames ||
@@ -33,12 +30,14 @@ controller.register = async (req, res) => {
 			!body.RUT ||
 			!body.gender ||
 			!body.email ||
-      !body.phone ||
-      !body.password
+			!body.phone ||
+			!req.body.password
 		) {
 			return res.status(400).send('Campos inválidos.');
 		}
 
+		// Encrypt the password
+		body.password = bcrypt.hashSync(req.body.password, saltRounds);
 
 		const userDB = await User.create(body);
 

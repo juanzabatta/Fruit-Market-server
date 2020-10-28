@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const corsOptions = require('./middlewares');
+require('dotenv').config();
 require('./db/connection');
 const compression = require('compression');
 const app = express();
